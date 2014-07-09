@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0.
+See License.txt in the project root for license information.
+-->
+<resources>
+
+    <string name="app_name">OneNotePickerLib</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_close">Close</string>
+    <string name="text_notebook">Notebook</string>
+    <string name="text_section">Section</string>
+    <string name="text_section_group">Section Group</string>
+    <string name="text_onenote">OneNote</string>
+    <string name="text_notebooks">Notebooks</string>
+    <string name="text_loading">Loading…</string>
+</resources>

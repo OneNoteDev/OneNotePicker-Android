@@ -1,0 +1,94 @@
+<!--
+Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0.
+See License.txt in the project root for license information.
+-->
+<resources>
+
+    <style name="OneNotePicker.Light" parent="Theme.AppCompat.Light">
+        <!-- Remove shadow under action bar: -->
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:actionBarStyle">@style/OneNotePicker.Light.ActionBar</item>
+        <item name="android:windowBackground">@color/light_background_color</item>
+
+        <!-- User styles -->
+        <item name="themedText">@style/OneNotePicker.Light.Text</item>
+        <item name="themedIconNotebook">@drawable/ic_notebook_light</item>
+        <item name="themedIconSection">@drawable/ic_section_light</item>
+        <item name="themedIconSectionGroup">@drawable/ic_section_group_light</item>
+        <item name="themedIconActionClose">@drawable/ic_action_close_light</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/OneNotePicker.Light.ActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="OneNotePicker.Light.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:titleTextStyle">@style/OneNotePicker.Light.ActionBar.TitleTextStyle
+        </item>
+        <item name="android:subtitleTextStyle">
+            @style/OneNotePicker.Light.ActionBar.SubTitleTextStyle
+        </item>
+
+        <!-- Support library compatibility -->
+        <item name="titleTextStyle">@style/OneNotePicker.Light.ActionBar.TitleTextStyle</item>
+        <item name="subtitleTextStyle">@style/OneNotePicker.Light.ActionBar.SubTitleTextStyle</item>
+    </style>
+
+    <style name="OneNotePicker.Light.ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">14dp</item> <!-- using 'dp' instead of 'sp' to ignore the user's font size preference -->
+        <item name="android:textColor">@color/light_text_faded_color</item>
+    </style>
+
+    <style name="OneNotePicker.Light.ActionBar.SubTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">18dp</item> <!-- using 'dp' instead of 'sp' to ignore the user's font size preference -->
+        <item name="android:textColor">@color/light_text_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- DARK THEME -->
+    <style name="OneNotePicker.Dark" parent="Theme.AppCompat">
+        <!-- Remove shadow under action bar: -->
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:actionBarStyle">@style/OneNotePicker.Dark.ActionBar</item>
+        <!--<item name="android:windowBackground">@color/light_background_color</item>-->
+
+        <!-- User styles -->
+        <item name="themedText">@style/OneNotePicker.Dark.Text</item>
+        <item name="themedIconNotebook">@drawable/ic_notebook_dark</item>
+        <item name="themedIconSection">@drawable/ic_section_dark</item>
+        <item name="themedIconSectionGroup">@drawable/ic_section_group_dark</item>
+        <item name="themedIconActionClose">@drawable/ic_action_close_dark</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/OneNotePicker.Dark.ActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="OneNotePicker.Dark.ActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="android:titleTextStyle">@style/OneNotePicker.Dark.ActionBar.TitleTextStyle
+        </item>
+        <item name="android:subtitleTextStyle">
+            @style/OneNotePicker.Dark.ActionBar.SubTitleTextStyle
+        </item>
+
+        <!-- Support library compatibility -->
+        <item name="titleTextStyle">@style/OneNotePicker.Dark.ActionBar.TitleTextStyle</item>
+        <item name="subtitleTextStyle">@style/OneNotePicker.Dark.ActionBar.SubTitleTextStyle</item>
+    </style>
+
+    <style name="OneNotePicker.Dark.ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">14dp</item> <!-- using 'dp' instead of 'sp' to ignore the user's font size preference -->
+        <item name="android:textColor">@color/dark_text_faded_color</item>
+    </style>
+
+    <style name="OneNotePicker.Dark.ActionBar.SubTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">18dp</item> <!-- using 'dp' instead of 'sp' to ignore the user's font size preference -->
+        <item name="android:textColor">@color/dark_text_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0.
+See License.txt in the project root for license information.
+-->
+<resources>
+    <attr name="themedText" format="reference"/>
+    <attr name="themedIconNotebook" format="reference"/>
+    <attr name="themedIconSection" format="reference"/>
+    <attr name="themedIconSectionGroup" format="reference"/>
+    <attr name="themedIconActionClose" format="reference"/>
+</resources>

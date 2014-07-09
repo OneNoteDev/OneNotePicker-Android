@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0.
+See License.txt in the project root for license information.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="16dp">
+
+    <FrameLayout
+        android:layout_width="36dp"
+        android:layout_height="70dp"
+        android:layout_weight="0">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/itemIcon"
+            android:layout_gravity="center_vertical|right" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/itemIconNotebook"
+            android:layout_gravity="center_vertical|right"
+            android:contentDescription="@string/text_notebook"
+            android:visibility="invisible"
+            android:src="?themedIconNotebook" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/itemIconSection"
+            android:layout_gravity="center_vertical|right"
+            android:contentDescription="@string/text_section"
+            android:visibility="invisible"
+            android:src="?themedIconSection" />
+
+        <ImageView
+            style="?themedIconSectionGroup"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/itemIconSectionGroup"
+            android:layout_gravity="center_vertical|right"
+            android:contentDescription="@string/text_section_group"
+            android:visibility="invisible"
+            android:src="?themedIconSectionGroup" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemText"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:maxLines="2"
+        android:layout_gravity="center_vertical"
+        android:singleLine="false"
+        android:ellipsize="end"
+        style="?themedText"
+        android:layout_marginLeft="12dp" />
+
+</LinearLayout>

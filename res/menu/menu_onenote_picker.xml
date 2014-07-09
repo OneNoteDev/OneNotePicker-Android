@@ -1,0 +1,12 @@
+<!--
+Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0.
+See License.txt in the project root for license information.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pickerlib="http://schemas.android.com/apk/res-auto" >
+    <item android:id="@+id/action_close"
+        android:icon="?themedIconActionClose"
+        android:title="@string/action_close"
+        pickerlib:showAsAction="always" />
+</menu>
