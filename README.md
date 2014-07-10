@@ -4,6 +4,8 @@ OneNotePickerLibrary for Android README
 ### Version info
 Version 1.0
 
+Microsoft Open Technologies, Inc. (MS Open Tech) has built the OneNote Picker for Android, an open source project that strives to help Android developers use the OneNote API from their apps.
+
 ###Android requirements for using the library
 ---------------
 * JDK 1.6 or higher
