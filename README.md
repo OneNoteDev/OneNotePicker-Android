@@ -83,7 +83,7 @@ Specify the required and optional properties for the **OneNotePickerActivity.cla
 
 ####Output
 
-The activity returns a **resultCode** of either RESULT\_OK, when the user successfully selects a section or RESULT\_CANCELLED when the user either cancels the operation or the operation fails due to an error.
+The activity returns a **resultCode** of either RESULT\_OK, when the user successfully selects a section or RESULT\_CANCELED when the user either cancels the operation or the operation fails due to an error.
 
 When the **resultCode** value is RESULT\_OK, the **OneNotePickerActivity** class returns the following values through the **getExtras** method on the **data** object returned by your implementation of the **onActivityResult(int requestCode, int resultCode, Intent data)** method:
 
@@ -94,7 +94,7 @@ When the **resultCode** value is RESULT\_OK, the **OneNotePickerActivity** class
 * **MODIFIED_TIME**: A **Date** object that specifies the date/time when any page in the selected section was last modified.
 * **LAST_MODIFIED_BY**: A **String** that specifies the name of the user who last modified any page in the selected section.
 
-When the **resultCode** value is RESULT\_CANCELLED, the **OneNotePickerActivity** class returns  a Boolean value for USER\_CANCELLED through the **getExtras** method on the **data** object returned by your implementation of **onActivityResult**. This means that the user has cancelled the operation by using the back arrow or the cancel button.
+When the **resultCode** value is RESULT\_CANCELED, the **OneNotePickerActivity** class returns  a Boolean value for USER\_CANCELLED through the **getExtras** method on the **data** object returned by your implementation of **onActivityResult**. This means that the user has cancelled the operation by using the back arrow or the cancel button.
 
 If the value of USER\_CANCELLED is false, the class also returns a Boolean value for API\_ERROR. If the value of API\_ERROR is true, the OneNote API has returned an error code and information about the error.
 
@@ -114,77 +114,62 @@ When the values for USER\_CANCELLED and API_ERROR are both false, the **OneNoteP
 
 The following example shows how to create a new **Intent** with the **OneNotePickerActivity** class, set the required and optional values, and handle errors and exceptions that might be returned:
 
-    private void pickOneNoteSection() { 
+```java
+private void pickOneNoteSection() {
     
-    //Create Intent 
-    Intent oneNotePickerIntent = new Intent(this, OneNotePickerActivity.class); 
+    //Create Intent
+    Intent oneNotePickerIntent = new Intent(this, OneNotePickerActivity.class);
+
+    //Set Properties
+    oneNotePickerIntent.putExtra("ACCESS_TOKEN", "<Insert OAuth Ticket>");
+    oneNotePickerIntent.putExtra("NAV_TEXT_COLOR", new Color().rgb(128,57,123));
+
+    //Start Picker - Assumes that a value for "REQUEST_CODE" has already been set
+    startActivityForResult(oneNotePickerIntent, REQUEST_CODE);
+}   
+
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     
-    //Set Properties 
-    
-    oneNotePickerIntent.putExtra("ACCESS_TOKEN", "<Insert OAuth Ticket>"); 
-    oneNotePickerIntent.putExtra("NAV_TEXT_COLOR", new Color().rgb(128,57,123)); 
-    
-    //Start Picker - Assumes that a value for "REQUEST_CODE" has already been set 
-    
-    startActivityForResult(oneNotePickerIntent, REQUEST_CODE); 
-    
-    }    
-    
-    @Override    
-    
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) { 
-    
-    //PICKER COMPLETES WITH SELECTED SECTION 
-    
-    
-    if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) { 
-    
-    //LOAD VALUES 
-        
-    String sectionID = data.getExtras().getString("SECTION_ID"); 
-    String sectionName = data.getExtras().getString("SECTION_NAME");  
-    URL pagesURL = (URL)data.getExtras().get("PAGES_URL"); 
-    Date createdTime = (Date)data.getExtras().get("CREATED_TIME"); 
-    Date modifiedTime = (Date)data.getExtras().get("MODIFIED_TIME"); 
-    String lastModifiedBy = data.getExtras().getString("LAST_MODIFIED_BY"); 
-    
-    //DO SOMETHING WITH THE INFO   
-    
-    } 
-    
+    //PICKER COMPLETES WITH SELECTED SECTION
+    if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+
+        //LOAD VALUES
+        String sectionID = data.getExtras().getString("SECTION_ID");
+        String sectionName = data.getExtras().getString("SECTION_NAME");
+        URL pagesURL = (URL) data.getExtras().get("PAGES_URL");
+        Date createdTime = (Date) data.getExtras().get("CREATED_TIME");
+        Date modifiedTime = (Date) data.getExtras().get("MODIFIED_TIME");
+        String lastModifiedBy = data.getExtras().getString("LAST_MODIFIED_BY");
+
+        //DO SOMETHING WITH THE INFO
+    }
+
     //PICKER CANCELLED OR generated an error
-    
-    else if (resultCode == RESULT_CANCELLED && requestCode == REQUEST_CODE){ 
-    
-    if(data.getExtras().getBoolean("USER_CANCELLED")){ 
-    
-    //USER CANCELLED OPERATION.  
-    
-    } 
-    
-    else if(data.getExtras().getBoolean("API_ERROR")){ 
-    
-    //API BASED ERROR. LOAD ERROR INFO 
-    
-    String apiErrorCode = data.getExtras().getString("API_ERROR_CODE"); 
-    String apiErrorString = data.getExtras().getString("API_ERROR_STRING"); 
-    URL apiErrorURL = (URL)data.getExtras().get("API_ERROR_URL"); 
-    
-    //DO SOMETHING WITH ERROR INFO   
-    
-    } 
-    
-    else { 
-     
-    //SYSTEM EXCEPTION. LOAD EXCEPTION 
-    
-    Exception e = (Exception)data.getExtras().get("SYSTEM_EXCEPTION"); 
-    
-    //HANDLE EXCEPTION 
-    
+    else if (resultCode == RESULT_CANCELED && requestCode == REQUEST_CODE) {
+        if (data.getExtras().getBoolean("USER_CANCELLED")) {
+
+            //USER CANCELLED OPERATION.
+
+        } else if (data.getExtras().getBoolean("API_ERROR")) {
+            //API BASED ERROR. LOAD ERROR INFO
+            String apiErrorCode = data.getExtras().getString("API_ERROR_CODE");
+            String apiErrorString = data.getExtras().getString("API_ERROR_STRING");
+            URL apiErrorURL = (URL) data.getExtras().get("API_ERROR_URL");
+
+            //DO SOMETHING WITH ERROR INFO
+
+        } else {
+            //SYSTEM EXCEPTION. LOAD EXCEPTION
+            Exception e = (Exception) data.getExtras().get("SYSTEM_EXCEPTION");
+
+            //HANDLE EXCEPTION
+
+        }
     }
-    }    
-    }
+}
+```
 
 ### OneNote API functionality used by this library
 
