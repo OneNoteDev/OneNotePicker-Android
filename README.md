@@ -83,7 +83,7 @@ Specify the required and optional properties for the **OneNotePickerActivity.cla
 
 ####Output
 
-The activity returns a **resultCode** of either RESULT\_OK, when the user successfully selects a section or RESULT\_CANCELLED when the user either cancels the operation or the operation fails due to an error.
+The activity returns a **resultCode** of either RESULT\_OK, when the user successfully selects a section or RESULT\_CANCELED when the user either cancels the operation or the operation fails due to an error.
 
 When the **resultCode** value is RESULT\_OK, the **OneNotePickerActivity** class returns the following values through the **getExtras** method on the **data** object returned by your implementation of the **onActivityResult(int requestCode, int resultCode, Intent data)** method:
 
@@ -94,7 +94,7 @@ When the **resultCode** value is RESULT\_OK, the **OneNotePickerActivity** class
 * **MODIFIED_TIME**: A **Date** object that specifies the date/time when any page in the selected section was last modified.
 * **LAST_MODIFIED_BY**: A **String** that specifies the name of the user who last modified any page in the selected section.
 
-When the **resultCode** value is RESULT\_CANCELLED, the **OneNotePickerActivity** class returns  a Boolean value for USER\_CANCELLED through the **getExtras** method on the **data** object returned by your implementation of **onActivityResult**. This means that the user has cancelled the operation by using the back arrow or the cancel button.
+When the **resultCode** value is RESULT\_CANCELED, the **OneNotePickerActivity** class returns  a Boolean value for USER\_CANCELLED through the **getExtras** method on the **data** object returned by your implementation of **onActivityResult**. This means that the user has cancelled the operation by using the back arrow or the cancel button.
 
 If the value of USER\_CANCELLED is false, the class also returns a Boolean value for API\_ERROR. If the value of API\_ERROR is true, the OneNote API has returned an error code and information about the error.
 
@@ -147,7 +147,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
     //PICKER CANCELLED OR generated an error
-    else if (resultCode == RESULT_CANCELLED && requestCode == REQUEST_CODE) {
+    else if (resultCode == RESULT_CANCELED && requestCode == REQUEST_CODE) {
         if (data.getExtras().getBoolean("USER_CANCELLED")) {
 
             //USER CANCELLED OPERATION.
