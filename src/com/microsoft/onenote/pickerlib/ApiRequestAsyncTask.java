@@ -8,11 +8,13 @@ package com.microsoft.onenote.pickerlib;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +23,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 class ApiRequestAsyncTask extends
-        AsyncTask<Void, Void, ApiResponse[]> {
+        AsyncTask<Void, Void, ApiNotebookResponse[]> {
     private final static String API_ROOT = "https://www.onenote.com/api/v1.0/";
     public List<ApiAsyncResponse> delegates = new ArrayList<ApiAsyncResponse>(2);
     public ApiRequest[] mRequests;
@@ -38,10 +40,10 @@ class ApiRequestAsyncTask extends
     }
 
     @Override
-    protected ApiResponse[] doInBackground(Void... voids) {
-        List<ApiResponse> responseList = new ArrayList<ApiResponse>();
+    protected ApiNotebookResponse[] doInBackground(Void... voids) {
+        List<ApiNotebookResponse> responseList = new ArrayList<ApiNotebookResponse>();
         for (ApiRequest request : mRequests) {
-            ApiResponse[] apiResponses;
+        	ApiNotebookResponse[] apiResponses;
             try {
                 apiResponses = requestResource(request);
             } catch (Exception ex) {
@@ -51,22 +53,27 @@ class ApiRequestAsyncTask extends
             }
             responseList.addAll(Arrays.asList(apiResponses));
         }
-        return responseList.toArray(new ApiResponse[responseList.size()]);
+        return responseList.toArray(new ApiNotebookResponse[responseList.size()]);
     }
 
-    private ApiResponse[] requestResource(ApiRequest request) throws Exception {
+    private ApiNotebookResponse[] requestResource(ApiRequest request) throws Exception {
         JSONObject responseJSON = getJSONResponse(API_ROOT + request.getEndpointURL());
 
-        List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
+        List<ApiNotebookResponse> notebookResponses = new ArrayList<ApiNotebookResponse>();
         if (responseJSON != null) {
             // Determine if values were returned or an error occurred
             if (responseJSON.has("value")) {
                 // Get response values
-                JSONArray values = responseJSON.getJSONArray("value");
+                JSONArray notebookObjects = responseJSON.getJSONArray("value");
                 // Iterate over all values, and convert JSON objects into library objects
-                for (int i = 0; i < values.length(); i++) {
-                    JSONObject object = values.getJSONObject(i);
-                    apiResponses.add(buildApiResponse(request, object));
+                for (int i = 0; i < notebookObjects.length(); i++) {
+                	JSONObject notebookObject = notebookObjects.getJSONObject(i);
+                	
+                    ApiNotebookResponse notebook = new ApiNotebookResponse(notebookObject);
+                    notebook.sections = getSections(notebookObject);
+                    notebook.sectionGroups = getSectionGroups(notebookObject);
+                    
+                    notebookResponses.add(notebook);
                 }
             } else if (responseJSON.has("error")) {
                 // Process and throw an API error
@@ -85,50 +92,34 @@ class ApiRequestAsyncTask extends
             }
         }
 
-        return apiResponses.toArray(new ApiResponse[apiResponses.size()]);
+        return notebookResponses.toArray(new ApiNotebookResponse[notebookResponses.size()]);
     }
-
-    private ApiResponse buildApiResponse(ApiRequest request, JSONObject object) throws Exception {
-        ApiResponse apiResponse = null;
-        // Get links
-        JSONObject links = object.optJSONObject("links");
-        if (request.getPrimaryEndpoint() == ApiRequestEndpoint.NOTEBOOKS
-                && !request.hasResourceId()
-                && !request.hasSecondaryEndpoint()) {
-            // Build notebook response
-            apiResponse = new ApiNotebookResponse();
-            ((ApiNotebookResponse) apiResponse).setIsDefault(
-                    object.optBoolean("isDefault"));
-            ((ApiNotebookResponse) apiResponse).setUserRole(
-                    object.optString("userRole"));
-            ((ApiNotebookResponse) apiResponse).setOwnerName(
-                    object.optString("ownerName"));
-        } else if (request.getSecondaryEndpoint() == ApiRequestEndpoint.SECTIONS) {
-            // Build section response
-            apiResponse = new ApiSectionResponse();
-            ((ApiSectionResponse) apiResponse).setIsDefault(
-                    object.optBoolean("isDefault"));
-            if (links != null) {
-                ((ApiSectionResponse) apiResponse).setPagesUrl(
-                        new URL(links.getJSONObject("pagesUrl").getString("href")));
-            } else {
-                ((ApiSectionResponse) apiResponse).setPagesUrl(
-                        new URL(object.getString("pagesUrl")));
-            }
-
-        } else if (request.getSecondaryEndpoint() == ApiRequestEndpoint.SECTION_GROUPS) {
-            // Build section groups response
-            apiResponse = new ApiSectionGroupResponse();
+    
+    private List<ApiSectionGroupResponse> getSectionGroups(JSONObject parentObject) throws JSONException, MalformedURLException {
+        List<ApiSectionGroupResponse> sectionGroups = new ArrayList<ApiSectionGroupResponse>();
+        JSONArray sectionGroupObjects = parentObject.getJSONArray("sectionGroups");
+        
+        for (int k = 0; k < sectionGroupObjects.length(); k++)
+        {
+        	JSONObject sectionGroupObject = sectionGroupObjects.getJSONObject(k);
+        	ApiSectionGroupResponse sectionGroup = new ApiSectionGroupResponse(sectionGroupObject);
+        	sectionGroup.sectionGroups = getSectionGroups(sectionGroupObject);
+        	sectionGroup.sections = getSections(sectionGroupObject);
+        	sectionGroups.add(sectionGroup);
         }
-        if (apiResponse != null) {
-            // Apply properties common to all response types
-            apiResponse.setId(object.getString("id"));
-            apiResponse.setName(object.getString("name"));
-            apiResponse.setCreatedTime(object.optString("createdTime"));
-            apiResponse.setModifiedTime(object.optString("lastModifiedTime"));
-            apiResponse.setLastModifiedBy(object.optString("lastModifiedBy"));
+        
+        return sectionGroups;
+	}
+
+	private List<ApiSectionResponse> getSections(JSONObject parentObject) throws JSONException, MalformedURLException
+    {
+        List<ApiSectionResponse> sections = new ArrayList<ApiSectionResponse>();
+        JSONArray sectionObjects = parentObject.getJSONArray("sections");
+        for (int k = 0; k < sectionObjects.length(); k++)
+        {
+        	sections.add(new ApiSectionResponse(sectionObjects.getJSONObject(k)));
         }
-        return apiResponse;
+        return sections;
     }
 
 
@@ -184,7 +175,7 @@ class ApiRequestAsyncTask extends
     }
 
     @Override
-    protected void onPostExecute(ApiResponse[] responses) {
+    protected void onPostExecute(ApiNotebookResponse[] responses) {
         super.onPostExecute(responses);
         for (ApiAsyncResponse delegate : delegates) {
             delegate.onApiResponse(responses, mCaughtException);

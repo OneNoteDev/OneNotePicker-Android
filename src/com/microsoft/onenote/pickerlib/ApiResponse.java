@@ -5,10 +5,12 @@
 //----------------------------------------------------------------------------
 package com.microsoft.onenote.pickerlib;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 class ApiResponse {
     protected String id;
@@ -17,6 +19,15 @@ class ApiResponse {
     protected Date modifiedTime;
     protected String lastModifiedBy;
 
+    public ApiResponse(JSONObject object) throws JSONException{
+        // Apply properties common to all response types
+        setId(object.getString("id"));
+        setName(object.getString("name"));
+        setCreatedTime(object.optString("createdTime"));
+        setModifiedTime(object.optString("lastModifiedTime"));
+        setLastModifiedBy(object.optString("lastModifiedBy"));
+    }
+    
     public String getId() {
         return id;
     }
