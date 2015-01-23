@@ -6,11 +6,22 @@
 package com.microsoft.onenote.pickerlib;
 
 import java.net.URL;
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 class ApiSectionGroupResponse extends ApiResponse {
     protected URL sectionsUrl;
     protected URL sectionGroupsUrl;
 
+    public ApiSectionGroupResponse(JSONObject object) throws JSONException{
+    	super(object);
+    }
+    
+    public List<ApiSectionResponse> sections;
+    public List<ApiSectionGroupResponse> sectionGroups;
+    
     public URL getSectionsUrl() {
         return sectionsUrl;
     }

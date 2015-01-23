@@ -6,7 +6,7 @@
 package com.microsoft.onenote.pickerlib;
 
 enum ApiRequestEndpoint {
-    NOTEBOOKS("Notebooks"), SECTION_GROUPS("SectionGroups"), SECTIONS("Sections");
+    EXPAND("Notebooks?$expand=sections,sectionGroups($expand=sections,sectionGroups($expand=sections;$levels=max))");
 
     private final String string;
 
@@ -17,5 +17,4 @@ enum ApiRequestEndpoint {
     public String toString() {
         return string;
     }
-
 }

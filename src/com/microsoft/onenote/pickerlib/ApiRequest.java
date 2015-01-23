@@ -6,43 +6,13 @@
 package com.microsoft.onenote.pickerlib;
 
 class ApiRequest {
-    ApiRequestEndpoint primaryEndpoint = null;
-    String resourceId = null;
-    ApiRequestEndpoint secondaryEndpoint = null;
+    ApiRequestEndpoint endpoint = null;
 
     public ApiRequest(ApiRequestEndpoint endpoint) {
-        this.primaryEndpoint = endpoint;
-    }
-
-    public ApiRequest(ApiRequestEndpoint primaryEndpoint, String resourceId, ApiRequestEndpoint secondEndpoint) {
-        this.primaryEndpoint = primaryEndpoint;
-        this.resourceId = resourceId;
-        this.secondaryEndpoint = secondEndpoint;
-    }
-
-    public ApiRequestEndpoint getPrimaryEndpoint() {
-        return primaryEndpoint;
-    }
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public ApiRequestEndpoint getSecondaryEndpoint() {
-        return secondaryEndpoint;
-    }
-
-    public boolean hasResourceId() {
-        return resourceId != null;
-    }
-
-    public boolean hasSecondaryEndpoint() {
-        return secondaryEndpoint != null;
+        this.endpoint = endpoint;
     }
 
     public String getEndpointURL() {
-        return primaryEndpoint.toString() + "/"
-                + (hasResourceId() ? resourceId + "/" : "")
-                + (hasSecondaryEndpoint() ? secondaryEndpoint.toString() + "/" : "");
+        return endpoint.toString();
     }
 }

@@ -6,5 +6,5 @@
 package com.microsoft.onenote.pickerlib;
 
 interface ApiAsyncResponse {
-    void onApiResponse(ApiResponse[] responses, Exception error);
+    void onApiResponse(ApiNotebookResponse[] responses, Exception error);
 }

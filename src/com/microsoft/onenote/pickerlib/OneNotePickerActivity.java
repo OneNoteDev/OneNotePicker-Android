@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONObject;
+
 
 public class OneNotePickerActivity extends ActionBarActivity {
 
@@ -88,14 +90,16 @@ public class OneNotePickerActivity extends ActionBarActivity {
         // Retrieve the controller fragment
         FragmentManager fm = getSupportFragmentManager();
         mControllerFragment = (ControllerFragment) fm.findFragmentByTag("controller");
-
+        
         if (savedInstanceState == null) {
             mNotebooksFragment = new PickerListFragment(
                     new UiActionBarSettings(
                             getString(R.string.text_notebooks),
                             getString(R.string.text_onenote), false)
             );
-
+            
+            mNotebooksFragment.mLoading = true;
+            
             // Create the controller fragment the first time
             if (mControllerFragment == null) {
                 mControllerFragment = new ControllerFragment(mAccessToken, mNotebooksFragment);
@@ -202,6 +206,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Drill down on a fragment
     protected void showFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
@@ -210,6 +215,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
         }
     }
 
+    // Show the very first fragment
     protected void addFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
@@ -218,6 +224,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
         }
     }
 
+    // Clicking on an item can either return (if it is a section) or drill down (if it is a notebook or section group)
     protected void handlePickerItemClick(PickerListFragment parent, UiPickerItemModel model) {
         if (model.getType() == UiPickerItemType.SECTION) {
             Intent resultIntent = new Intent();
@@ -234,6 +241,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
         }
     }
 
+    // Handle any type of exception that was thrown
     protected void handleError(Throwable exception) {
         boolean apiError;
         Intent resultIntent = new Intent();
@@ -288,30 +296,67 @@ public class OneNotePickerActivity extends ActionBarActivity {
             super.onCreate(savedInstanceState);
 
             mApiController = new ApiController(mAccessToken) {
-                @Override
-                public ApiAsyncResponse getApiResponseDelegate(ApiResponse response) {
-                    if (response instanceof ApiNotebookResponse
-                            || response instanceof ApiSectionGroupResponse) {
+            	// On an API response, check for failures, then populate fragments recursively
+				@Override
+				public void onApiResponse(ApiNotebookResponse[] responses,
+						Exception error) {
+                	
+					if (error != null){
+                        ((OneNotePickerActivity) getActivity()).handleError(error);
+                        return;
+                	}
+					
+					for (int i = 0; i < responses.length; i++)
+	                {	
+	                	ApiNotebookResponse notebookResponse = responses[i];
+	                    
+	                	// Add to start fragment models
+	                	mStartFragment.mLoadedModels.add(new UiPickerItemModel(UiPickerItemType.NOTEBOOK, notebookResponse.getName(), notebookResponse));
+	                	
+						// Cycle through the returned notebooks and populate mPickerListFragments
+	                    PickerListFragment notebookFragment = new PickerListFragment(new UiActionBarSettings(notebookResponse.getName(), null, null));
+	                    
+	                    // Also populate their children sections/sectionGroups
+	                    addSectionsToFragment(notebookResponse.sections, notebookFragment);
+	                    addSectionGroupsToFragment(notebookResponse.sectionGroups, notebookFragment);
+	                    
+	                    notebookFragment.updateListAdapterWithModels();
+	                    // Add the notebook to mPickerListFragments
+	                    mPickerListFragments.put(notebookResponse, notebookFragment);
+	                }
+	                
+	                mStartFragment.updateListAdapterWithModels();
+				}
 
-                        if (!mPickerListFragments.containsKey(response)) {
-                            PickerListFragment fragment = new PickerListFragment(
-                                    new UiActionBarSettings(response.getName(), null, null));
-                            mPickerListFragments.put(response, fragment);
-                            return fragment;
-                        } else {
-                            return mPickerListFragments.get(response);
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-
-                @Override
-                public void onApiError(Exception error) {
-                    ((OneNotePickerActivity) getActivity()).handleError(error);
-                }
+				// Add sections to fragment
+				private void addSectionsToFragment(List<ApiSectionResponse> sections, PickerListFragment fragment) {
+					for (int k = 0; k < sections.size(); k++)
+					{
+						ApiSectionResponse sectionResponse = sections.get(k);
+						fragment.mLoadedModels.add(new UiPickerItemModel(UiPickerItemType.SECTION, sectionResponse.getName(), sectionResponse));
+					}
+				}
+				
+				// Add sectionGroups to a fragment, and to mPickerListFragments
+				private void addSectionGroupsToFragment(List<ApiSectionGroupResponse> sectionGroups, PickerListFragment fragment) {
+					for (int k = 0; k < sectionGroups.size(); k++)
+					{
+						ApiSectionGroupResponse sectionGroupResponse = sectionGroups.get(k);
+						fragment.mLoadedModels.add(new UiPickerItemModel(UiPickerItemType.SECTION_GROUP, sectionGroupResponse.getName(), sectionGroupResponse));
+						
+						// This section group should also be its own fragment - Add it to mPickerListFragments
+	                    PickerListFragment sectionGroupFragment = new PickerListFragment(new UiActionBarSettings(sectionGroupResponse.getName(), null, null));
+	                    // Also populate their children sections/sectionGroups
+	                    addSectionsToFragment(sectionGroupResponse.sections, sectionGroupFragment);
+	                    addSectionGroupsToFragment(sectionGroupResponse.sectionGroups, sectionGroupFragment);
+	                    
+	                    sectionGroupFragment.updateListAdapterWithModels();
+	                    
+	                    mPickerListFragments.put(sectionGroupResponse, sectionGroupFragment);
+					}
+				}
             };
-            mApiController.begin(mStartFragment);
+            mApiController.begin();
         }
 
         public PickerListFragment getPickerFragment(PickerListFragment parent, UiPickerItemModel model) {
@@ -319,9 +364,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
             if (fragment != null) {
                 fragment.getActionBarSettings().setShowArrow(true);
                 fragment.getActionBarSettings().setSubtitle(parent.getActionBarSettings().getTitle());
-                if (fragment.isLoading()) {
-                    mApiController.prioritize(model.getResultData());
-                }
+                fragment.updateListAdapterWithModels();
             }
             return fragment;
         }
@@ -332,20 +375,19 @@ public class OneNotePickerActivity extends ActionBarActivity {
         }
     }
 
-
     /**
      * A fragment that acts as an API response controller and a picker list view
      */
     @SuppressLint("ValidFragment")
-    private class PickerListFragment extends RetainedFragment
-            implements ApiAsyncResponse, AdapterView.OnItemClickListener {
+    private class PickerListFragment extends RetainedFragment implements AdapterView.OnItemClickListener {
 
         private UiPickerListAdapter mListAdapter = null;
         private List<UiPickerItemModel> mLoadedModels = new ArrayList<UiPickerItemModel>();
         private UiActionBarSettings mActionBarSettings;
         private OneNotePickerActivity mPickerActivity;
-        private boolean mLoading = true;
-
+        
+        // Used exclusively for the progressbar showing/hiding on the first API call
+        public boolean mLoading = false;
 
         public PickerListFragment(UiActionBarSettings actionBarSettings) {
             mActionBarSettings = actionBarSettings;
@@ -384,7 +426,7 @@ public class OneNotePickerActivity extends ActionBarActivity {
                     @Override
                     public void onChanged() {
                         super.onChanged();
-                        if (!mLoading && PickerListFragment.this.isVisible()) {
+                        if (PickerListFragment.this.isVisible()) {
                             loadingSpinner.setVisibility(View.GONE);
                         }
                     }
@@ -395,53 +437,20 @@ public class OneNotePickerActivity extends ActionBarActivity {
             return rootView;
         }
 
-        private void updateListAdapterWithModels() {
+        public void updateListAdapterWithModels() {
             if (mLoadedModels != null && mListAdapter != null) {
+            	mLoading = false;
+            	mListAdapter.clear();
                 for (UiPickerItemModel model : mLoadedModels) {
                     mListAdapter.add(model);
                 }
                 mListAdapter.notifyDataSetChanged();
-                mLoadedModels = null;
             }
-        }
-
-        @Override
-        public void onApiResponse(ApiResponse[] responses, Exception error) {
-            if (error != null) {
-                // Ignore any response with an error
-                return;
-            }
-
-            if (!mLoading) {
-                // If a response has already been received, ignore any other extraneous responses.
-                // This is prevented in the implementation of the API calling pattern,
-                // but this check here prevents the small chance of concurrency problems.
-                return;
-            }
-
-            for (ApiResponse response : responses) {
-                UiPickerItemType pickerItemType = null;
-                if (response.getClass().equals(ApiNotebookResponse.class)) {
-                    pickerItemType = UiPickerItemType.NOTEBOOK;
-                } else if (response.getClass().equals(ApiSectionResponse.class)) {
-                    pickerItemType = UiPickerItemType.SECTION;
-                } else if (response.getClass().equals(ApiSectionGroupResponse.class)) {
-                    pickerItemType = UiPickerItemType.SECTION_GROUP;
-                }
-                mLoadedModels.add(new UiPickerItemModel(pickerItemType, response.getName(), response));
-            }
-            mLoading = false;
-
-            updateListAdapterWithModels();
         }
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             mPickerActivity.handlePickerItemClick(this, mListAdapter.getItem(i));
-        }
-
-        public boolean isLoading() {
-            return mLoading;
         }
 
         public UiActionBarSettings getActionBarSettings() {
@@ -464,7 +473,4 @@ public class OneNotePickerActivity extends ActionBarActivity {
             setRetainInstance(true);
         }
     }
-
-
-
 }

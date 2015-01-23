@@ -5,12 +5,22 @@
 //----------------------------------------------------------------------------
 package com.microsoft.onenote.pickerlib;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 class ApiNotebookResponse extends ApiSectionGroupResponse {
     protected boolean isDefault;
     protected String createdBy;
     protected String userRole;
     protected String ownerName;
 
+    public ApiNotebookResponse(JSONObject object) throws JSONException{
+        super(object);
+    	setIsDefault(object.optBoolean("isDefault"));
+        setUserRole(object.optString("userRole"));
+        setOwnerName(object.optString("ownerName"));
+    }
+    
     public boolean getIsDefault() {
         return isDefault;
     }
