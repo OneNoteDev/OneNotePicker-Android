@@ -181,3 +181,5 @@ find additional documentation at the links below.
 * [GET a specific section group to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn770192(v=office.15).aspx)
 * [GET sections to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn769049(v=office.15).aspx)
 * [GET a specific section to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn770191(v=office.15).aspx)
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
