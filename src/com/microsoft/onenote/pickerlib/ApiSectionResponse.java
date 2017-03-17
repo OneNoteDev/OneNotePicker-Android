@@ -16,13 +16,14 @@ class ApiSectionResponse extends ApiResponse {
     private URL pagesUrl;
 
     public ApiSectionResponse(JSONObject object) throws JSONException, MalformedURLException{
-    	super(object);
-        JSONObject links = object.optJSONObject("links");
-        setIsDefault(object.optBoolean("isDefault"));
-        if (links != null) {
-            setPagesUrl(new URL(links.getJSONObject("pagesUrl").getString("href")));
-        } else {
-            setPagesUrl(new URL(object.getString("pagesUrl")));
+        super(object);
+
+        if (object != null) {
+            setIsDefault(object.optBoolean("isDefault"));
+
+            if (object.has("pagesUrl")) {
+                this.setPagesUrl(new URL(object.getString("pagesUrl")));
+            }
         }
     }
     
