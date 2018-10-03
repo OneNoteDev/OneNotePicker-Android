@@ -6,7 +6,7 @@ Version 1.0
 
 Microsoft Open Technologies, Inc. (MS Open Tech) has built the OneNote Picker for Android, an open source project that strives to help Android developers use the OneNote API from their apps.
 
-###Android requirements for using the library
+### Android requirements for using the library
 ---------------
 * JDK 1.6 or higher
 * Works on Android 2.2 (Froyo) and higher
@@ -19,15 +19,15 @@ Microsoft Open Technologies, Inc. (MS Open Tech) has built the OneNote Picker fo
 
 Be sure to verify the prerequisites for these too.
 
-* [Google Android Developer Tools bundle](http://developer.android.com/sdk/index.html)
-* [JDK 1.6 or higher](http://www.oracle.com/technetwork/java/javase/downloads/index.html)  
+* [Google Android Developer Tools bundle](https://developer.android.com/studio/)
+* [JDK 1.6 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html)  
 
 **Accounts**
 
-* As the user, you'll need to [have a Microsoft account](http://msdn.microsoft.com/EN-US/library/office/dn575426.aspx) 
+* As the user, you'll need to [have a Microsoft account](https://docs.microsoft.com/en-us/previous-versions/office/office-365-api/how-to/onenote-auth) 
 so your project can authenticate with the [Microsoft Live connect SDK](https://github.com/liveservices/LiveSDK-for-Android).
 
-###Reference the Library
+### Reference the Library
 
 To compile the source code,...
 
@@ -71,17 +71,17 @@ To add the Internet permission to your project's manifest,...
 
 ### Using the library
 
-The **OneNotePickerLibrary** provides a class called **OneNotePickerActivity.class** that extends Activity. You implement this class with an [Intent](http://developer.android.com/reference/android/content/Intent.html). To handle return values from this class, you need to implement the [onActivityResult](http://developer.android.com/reference/android/app/Activity.html) method.
+The **OneNotePickerLibrary** provides a class called **OneNotePickerActivity.class** that extends Activity. You implement this class with an [Intent](https://developer.android.com/reference/android/content/Intent). To handle return values from this class, you need to implement the [onActivityResult](https://developer.android.com/reference/android/app/Activity.html#onActivityResult(int,%20int,%20android.content.Intent)) method.
 
-####Input
+#### Input
 
 Specify the required and optional properties for the **OneNotePickerActivity.class** by setting these "extras" by using the **putExtra** method on the **Intent**:
 
-*  **ACCESS_TOKEN** (Required):  A **String** that specifies the access token to be used for authentication. See [Authenticate the user for the OneNote API](http://msdn.microsoft.com/en-us/library/office/dn575435(v=office.15).aspx) to learn how to authenticate your product.
+*  **ACCESS_TOKEN** (Required):  A **String** that specifies the access token to be used for authentication. See [Authenticate the user for the OneNote API](https://docs.microsoft.com/en-us/previous-versions/office/office-365-api/how-to/onenote-auth) to learn how to authenticate your product.
 *  **NAV_TEXT_COLOR** (Optional): A **Color** object that specifies the color of the properties in the action bar (the text, back arrow, and cancel button). If this is not set, then the default color will be used.
 *  **THEME_COLOR** (Optional): An **Enum** value (**OneNotePickerThemeColor.LIGHT** and **OneNotePickerThemeColor.DARK**) that specifies the light or dark theme.
 
-####Output
+#### Output
 
 The activity returns a **resultCode** of either RESULT\_OK, when the user successfully selects a section or RESULT\_CANCELED when the user either cancels the operation or the operation fails due to an error.
 
@@ -100,7 +100,7 @@ If the value of USER\_CANCELLED is false, the class also returns a Boolean value
 
 When the value for API_ERROR is true, the **OneNotePickerActivity** class returns the following values:
 
-* **API\_ERROR_CODE**: A **String** that specifies the value of the error code returned by the OneNote API. See [OneNote API error and warning codes](http://msdn.microsoft.com/en-us/library/office/dn750990(v=office.15).aspx) for a list of possible error codes.
+* **API\_ERROR_CODE**: A **String** that specifies the value of the error code returned by the OneNote API. See [OneNote API error and warning codes](https://developer.microsoft.com/en-us/graph/docs/concepts/onenote_error_codes) for a list of possible error codes.
 * **API\_ERROR_URL**: A **URL** that specifies the value of the explanatory error URL returned by the OneNote API.
 * **API\_ERROR_STRING**: A **String** that contains a description of the error.
 
@@ -110,7 +110,7 @@ When the values for USER\_CANCELLED and API_ERROR are both false, the **OneNoteP
 
 * **SYSTEM_EXCEPTION**: An **Exception** object returned by the platform due to an error on the device.
 
-####Example
+#### Example
 
 The following example shows how to create a new **Intent** with the **OneNotePickerActivity** class, set the required and optional values, and handle errors and exceptions that might be returned:
 
@@ -176,10 +176,10 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 The following aspects of the API are used in this library. You can 
 find additional documentation at the links below.
 
-* [GET notebooks to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn769050(v=office.15).aspx)
-* [GET section groups to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn769052(v=office.15).aspx)
-* [GET a specific section group to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn770192(v=office.15).aspx)
-* [GET sections to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn769049(v=office.15).aspx)
-* [GET a specific section to which the user has access](http://msdn.microsoft.com/en-us/library/office/dn770191(v=office.15).aspx)
+* [GET notebooks to which the user has access](https://msdn.microsoft.com/en-us/library/office/dn769050(v=office.15).aspx)
+* [GET section groups to which the user has access](https://msdn.microsoft.com/en-us/library/office/dn769052(v=office.15).aspx)
+* [GET a specific section group to which the user has access](https://msdn.microsoft.com/en-us/library/office/dn770192(v=office.15).aspx)
+* [GET sections to which the user has access](https://msdn.microsoft.com/en-us/library/office/dn769049(v=office.15).aspx)
+* [GET a specific section to which the user has access](https://msdn.microsoft.com/en-us/library/office/dn770191(v=office.15).aspx)
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
